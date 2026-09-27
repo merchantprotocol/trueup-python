@@ -1,6 +1,6 @@
 """Integration tests against the live TrueUp API. Need TRUEUP_API_KEY (and optionally TRUEUP_BASE_URL).
 
-Each full run uses 4 analyses. Run in Docker: `just test` (or `docker compose run --rm test`).
+Each full run uses 6 analyses. Run in Docker: `just test` (or `docker compose run --rm test`).
 """
 
 import csv
@@ -99,3 +99,19 @@ def test_stored_files_runs_and_models():
             tu.files.delete(receiving["id"])
         with pytest.raises(NotFoundError):
             tu.files.get(statement["id"])
+
+
+MATCHED = [["1", "1"], ["2", "2"], ["3", "3"], ["4", "5"]]
+
+
+@live
+def test_match_two_lists_then_reuse_the_learning():
+    with TrueUp() as tu:
+        result = tu.match(FIXTURES / "invoice.csv", FIXTURES / "catalog.csv")
+        assert result["analysis"] == "match"
+        assert [p[:2] for p in result["details"]["pairs"]] == MATCHED
+        assert [f["subject"] for f in result["findings"] if f["kind"] == "only_left"] == ["5"]
+        again = tu.match(Table.rows("invoice.csv", rows("invoice.csv")), Table.rows("catalog.csv", rows("catalog.csv")),
+                         weights=result["details"]["weights"])
+        assert [p[:2] for p in again["details"]["pairs"]] == MATCHED
+        assert again["details"]["model"]["learned"] is False
