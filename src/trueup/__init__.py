@@ -15,7 +15,8 @@ import os
 import random
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, Iterator, List, Mapping, Optional, Sequence, Tuple, Union
+from urllib.parse import quote, urlencode
 
 import httpx
 
@@ -152,6 +153,9 @@ class TrueUp:
         self.base_url = (base_url or os.environ.get("TRUEUP_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
         self.max_retries = max_retries
         self._http = http_client or httpx.Client(timeout=timeout)
+        self.files = Files(self)
+        self.runs = Runs(self)
+        self.models = Models(self)
 
     def close(self) -> None:
         self._http.close()
@@ -201,9 +205,29 @@ class TrueUp:
         parts = [("files", _table(f)._file()) for f in files]
         return self._request("POST", "/v1/reconcile", files=parts, data=_options(weights, answers))
 
+    def reconcile_stored(self, left_file_id: Optional[str] = None, right_file_id: Optional[str] = None, *,
+                         file_ids: Optional[Sequence[str]] = None, model: Optional[str] = None,
+                         answers: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
+        """Reconcile files already stored in the team (see :attr:`files`), by id: ``left_file_id`` and
+        ``right_file_id``, or ``file_ids`` for TrueUp to pick the pair. ``model`` applies a saved model instead of
+        learning. The run is kept; its id is ``run_id`` in the result. Counts as one analysis.
+        """
+        if file_ids is not None:
+            body: Dict[str, Any] = {"file_ids": list(file_ids)}
+        elif left_file_id and right_file_id:
+            body = {"left_file_id": left_file_id, "right_file_id": right_file_id}
+        else:
+            raise InvalidRequestError("Pass left_file_id and right_file_id, or file_ids.", 0, "invalid_request")
+        if model is not None:
+            body["model"] = model
+        if answers is not None:
+            body["answers"] = answers
+        return self._request("POST", "/v1/reconcile", json_body=body)
+
     # ------------------------------------------------------------ transport
 
-    def _request(self, method: str, path: str, json_body: Any = None, files: Any = None, data: Any = None) -> Any:
+    def _request(self, method: str, path: str, json_body: Any = None, files: Any = None, data: Any = None,
+                 raw: bool = False) -> Any:
         headers = {"authorization": f"Bearer {self._api_key}", "accept": "application/json",
                    "user-agent": f"trueup-python/{__version__}"}
         attempt = 0
@@ -217,6 +241,8 @@ class TrueUp:
                     attempt += 1
                     continue
                 raise ConnectionError(f"Couldn't reach TrueUp at {self.base_url}: {e}") from e
+            if raw and res.is_success:
+                return res.content
             try:
                 payload = res.json() if res.content else None
             except ValueError:
@@ -232,6 +258,87 @@ class TrueUp:
                 attempt += 1
                 continue
             raise error
+
+
+def _q(value: str) -> str:
+    return quote(value, safe="")
+
+
+class Files:
+    """The team's stored files: ``tu.files``."""
+
+    def __init__(self, client: TrueUp):
+        self._c = client
+
+    def upload(self, *tables: TableLike) -> List[Dict[str, Any]]:
+        """Upload one or more files (paths or :class:`Table`). Each comes back with its ``id``, ``rows``,
+        ``columns`` and ``roles`` (what TrueUp read each column as)."""
+        if not tables:
+            raise InvalidRequestError("Pass at least one file to upload.", 0, "invalid_request")
+        return self._c._request("POST", "/v1/files", files=[("file", _table(t)._file()) for t in tables])["files"]
+
+    def list(self) -> List[Dict[str, Any]]:
+        return self._c._request("GET", "/v1/files")["files"]
+
+    def get(self, file_id: str) -> Dict[str, Any]:
+        return self._c._request("GET", f"/v1/files/{_q(file_id)}")["file"]
+
+    def content(self, file_id: str) -> bytes:
+        """The file's bytes, exactly as uploaded."""
+        return self._c._request("GET", f"/v1/files/{_q(file_id)}/content", raw=True)
+
+    def delete(self, file_id: str) -> None:
+        self._c._request("DELETE", f"/v1/files/{_q(file_id)}")
+
+
+class Runs:
+    """Runs on stored files (from the API or the dashboard), newest first: ``tu.runs``."""
+
+    def __init__(self, client: TrueUp):
+        self._c = client
+
+    def list(self, limit: Optional[int] = None, before: Optional[str] = None) -> Dict[str, Any]:
+        """One page: ``{"runs": [...], "has_more": bool}``. ``limit`` 1-100; ``before`` a run id."""
+        params = {k: v for k, v in (("limit", limit), ("before", before)) if v is not None}
+        return self._c._request("GET", "/v1/runs" + (f"?{urlencode(params)}" if params else ""))
+
+    def all(self) -> Iterator[Dict[str, Any]]:
+        """Every run, fetching page after page."""
+        before = None
+        while True:
+            page = self.list(limit=100, before=before)
+            yield from page["runs"]
+            if not page["has_more"] or not page["runs"]:
+                return
+            before = page["runs"][-1]["id"]
+
+    def get(self, run_id: str) -> Dict[str, Any]:
+        """``{"run": {...}, "result": {...}}``: the result has the same shape :meth:`TrueUp.reconcile` returns."""
+        return self._c._request("GET", f"/v1/runs/{_q(run_id)}")
+
+
+class Models:
+    """Saved models, what a run learned, reusable on next month's files: ``tu.models``."""
+
+    def __init__(self, client: TrueUp):
+        self._c = client
+
+    def create(self, run_id: str, name: Optional[str] = None) -> str:
+        """Save what a run learned. Returns the model id."""
+        body: Dict[str, Any] = {"run_id": run_id}
+        if name is not None:
+            body["name"] = name
+        return self._c._request("POST", "/v1/models", json_body=body)["id"]
+
+    def list(self) -> List[Dict[str, Any]]:
+        return self._c._request("GET", "/v1/models")["models"]
+
+    def get(self, model_id: str) -> Dict[str, Any]:
+        """One model, including its ``weights``."""
+        return self._c._request("GET", f"/v1/models/{_q(model_id)}")["model"]
+
+    def delete(self, model_id: str) -> None:
+        self._c._request("DELETE", f"/v1/models/{_q(model_id)}")
 
 
 def _options(weights: Optional[Mapping[str, Any]], answers: Optional[Mapping[str, Any]]) -> Dict[str, str]:
