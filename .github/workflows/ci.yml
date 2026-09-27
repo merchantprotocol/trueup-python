@@ -4,7 +4,7 @@ on:
     branches: [main]
   pull_request:
   schedule:
-    - cron: "17 13 * * *"   # daily: the live API still answers this SDK
+    - cron: "17 13 * * 1"   # weekly: the live API still answers this SDK (2 analyses a run)
 jobs:
   test:
     runs-on: ubuntu-latest
