@@ -1,6 +1,6 @@
 """Integration tests against the live TrueUp API. Need TRUEUP_API_KEY (and optionally TRUEUP_BASE_URL).
 
-Each full run uses 2 analyses. Run in Docker: `just test` (or `docker compose run --rm test`).
+Each full run uses 4 analyses. Run in Docker: `just test` (or `docker compose run --rm test`).
 """
 
 import csv
@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from trueup import AuthenticationError, InvalidRequestError, Table, TrueUp
+from trueup import AuthenticationError, InvalidRequestError, NotFoundError, Table, TrueUp
 
 FIXTURES = Path(__file__).parent / "fixtures"
 live = pytest.mark.skipif(not os.environ.get("TRUEUP_API_KEY"), reason="needs TRUEUP_API_KEY")
@@ -64,3 +64,38 @@ def test_errors_are_typed():
     with TrueUp() as tu, pytest.raises(InvalidRequestError) as e:
         tu.reconcile(FIXTURES / "statement.csv", Table.content("scan.pdf", b"%PDF-1.4"))
     assert e.value.status == 422 and e.value.code == "unsupported_file"
+
+
+@live
+def test_stored_files_runs_and_models():
+    with TrueUp() as tu:
+        statement, receiving = tu.files.upload(FIXTURES / "statement.csv", FIXTURES / "receiving.csv")
+        try:
+            assert statement["rows"] == 8
+            assert tu.files.get(receiving["id"])["name"] == "receiving.csv"
+            assert any(f["id"] == statement["id"] for f in tu.files.list())
+            assert tu.files.content(statement["id"]) == (FIXTURES / "statement.csv").read_bytes()
+
+            result = tu.reconcile_stored(statement["id"], receiving["id"])
+            assert result["stats"]["paired"] == 7
+            got = tu.runs.get(result["run_id"])
+            assert got["run"]["status"] == "done"
+            assert got["result"]["stats"]["paired"] == 7
+            page = tu.runs.list(limit=1)
+            assert len(page["runs"]) == 1 and page["has_more"] is True
+            assert tu.runs.list(limit=1, before=page["runs"][0]["id"])["runs"][0]["id"] != page["runs"][0]["id"]
+
+            model_id = tu.models.create(result["run_id"], "sdk test")
+            try:
+                assert tu.models.get(model_id)["weights"]["format"] == "trueup.match-weights"
+                again = tu.reconcile_stored(file_ids=[statement["id"], receiving["id"]], model=model_id)
+                assert again["details"]["model"]["learned"] is False
+            finally:
+                tu.models.delete(model_id)
+            with pytest.raises(NotFoundError):
+                tu.models.get(model_id)
+        finally:
+            tu.files.delete(statement["id"])
+            tu.files.delete(receiving["id"])
+        with pytest.raises(NotFoundError):
+            tu.files.get(statement["id"])

@@ -74,6 +74,33 @@ trueup.reconcile("statement.csv", "receiving.csv", answers={
 
 Each call to `reconcile` or `reconcile_files` counts as one analysis on your plan.
 
+## Stored files, runs and saved models
+
+Files uploaded to your team stay there (you'll also see them in the dashboard). Runs on stored files are kept, and what a run learned can be saved as a model:
+
+```python
+statement, receiving = trueup.files.upload("statement.csv", "receiving.csv")
+statement["rows"]    # 8
+statement["roles"]   # {"Inv Date": "date", "Qty": "number", ...}
+
+result = trueup.reconcile_stored(statement["id"], receiving["id"])
+model_id = trueup.models.create(result["run_id"], "Acme statements")
+
+# Next month: apply what was learned.
+trueup.reconcile_stored(file_ids=[april_statement["id"], april_receiving["id"]], model=model_id)
+```
+
+| Call | Returns |
+|---|---|
+| `files.upload(*tables)`, `files.list()`, `files.get(id)` | stored files: `id`, `name`, `rows`, `columns`, `roles` |
+| `files.content(id)` | the bytes, exactly as uploaded |
+| `files.delete(id)` | |
+| `reconcile_stored(left_id, right_id)` or `reconcile_stored(file_ids=[...])`, with `model=`, `answers=` | a result plus `run_id` (one analysis) |
+| `runs.list(limit=, before=)` | `{"runs": [...], "has_more": bool}`, newest first |
+| `runs.all()` | every run (a generator that pages for you) |
+| `runs.get(id)` | `{"run": ..., "result": ...}` |
+| `models.create(run_id, name)`, `models.list()`, `models.get(id)`, `models.delete(id)` | `models.get` includes the `weights` |
+
 ## Findings
 
 | `kind` | Meaning |
@@ -132,7 +159,7 @@ TrueUp(
 The tests run in Docker against the live API:
 
 ```bash
-export TRUEUP_API_KEY=tu_live_...   # a key for a test team (each run uses 2 analyses)
+export TRUEUP_API_KEY=tu_live_...   # a key for a test team (each run uses 4 analyses)
 just test                            # or: docker compose run --rm test
 ```
 
