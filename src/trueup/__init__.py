@@ -243,6 +243,19 @@ class TrueUp:
         return self._request("POST", "/v1/audit", files=[("files", _table(f)._file()) for f in files],
                              data=_options(weights, None))
 
+    def estimate(self, files: Sequence[TableLike], *, weights: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
+        """Price a new job from past estimates: a domain file for the trade (.tu), at least 3 past estimates in any
+        format, and one request describing the new job; or, with ``weights`` (``details["weights"]`` of an earlier
+        estimate), just the request. Counts as one analysis."""
+        if not files:
+            raise InvalidRequestError("Pass the domain file, past estimates and the request.", 0, "invalid_request")
+        return self._request("POST", "/v1/estimate", files=[("files", _table(f)._file()) for f in files],
+                             data=_options(weights, None))
+
+    def estimate_stored(self, file_ids: Sequence[str], *, model: Optional[str] = None) -> Dict[str, Any]:
+        """Price from files already stored in the team, by id. ``model`` applies a saved estimate model."""
+        return self._stored("/v1/estimate", None, None, file_ids, model, None)
+
     def audit_stored(self, file_ids: Sequence[str], *, model: Optional[str] = None) -> Dict[str, Any]:
         """Audit files already stored in the team, by id. ``model`` applies a saved audit model. The run is kept."""
         return self._stored("/v1/audit", None, None, file_ids, model, None)
