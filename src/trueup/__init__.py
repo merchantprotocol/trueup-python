@@ -205,6 +205,33 @@ class TrueUp:
         parts = [("files", _table(f)._file()) for f in files]
         return self._request("POST", "/v1/reconcile", files=parts, data=_options(weights, answers))
 
+    def match(self, left: TableLike, right: TableLike, *, weights: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
+        """Match two lists that describe the same things in different words (two catalogs, a price book and an
+        invoice): each record on ``left`` (the list to go through) is paired with its counterpart on ``right`` (the
+        list to search), or reported as having none. A path, or a :class:`Table`. Counts as one analysis.
+
+        ``weights``: ``details["weights"]`` from an earlier match, to apply instead of learning again.
+        """
+        lt, rt = _table(left), _table(right)
+        if lt.is_rows and rt.is_rows:
+            body: Dict[str, Any] = {"left": {"name": lt.name, "rows": lt._rows}, "right": {"name": rt.name, "rows": rt._rows}}
+            if weights is not None:
+                body["weights"] = weights
+            return self._request("POST", "/v1/match", json_body=body)
+        return self._request("POST", "/v1/match", files=[("left", lt._file()), ("right", rt._file())],
+                             data=_options(weights, None))
+
+    def match_files(self, files: Sequence[TableLike], *, weights: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
+        """Send two or more lists; TrueUp picks the pair to match and puts the shorter on the left. One analysis."""
+        return self._request("POST", "/v1/match", files=[("files", _table(f)._file()) for f in files],
+                             data=_options(weights, None))
+
+    def match_stored(self, left_file_id: Optional[str] = None, right_file_id: Optional[str] = None, *,
+                     file_ids: Optional[Sequence[str]] = None, model: Optional[str] = None) -> Dict[str, Any]:
+        """Match lists already stored in the team, by id. ``model`` applies a saved match model. The run is kept
+        (``run_id``). One analysis."""
+        return self._stored("/v1/match", left_file_id, right_file_id, file_ids, model, None)
+
     def reconcile_stored(self, left_file_id: Optional[str] = None, right_file_id: Optional[str] = None, *,
                          file_ids: Optional[Sequence[str]] = None, model: Optional[str] = None,
                          answers: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
@@ -212,6 +239,10 @@ class TrueUp:
         ``right_file_id``, or ``file_ids`` for TrueUp to pick the pair. ``model`` applies a saved model instead of
         learning. The run is kept; its id is ``run_id`` in the result. Counts as one analysis.
         """
+        return self._stored("/v1/reconcile", left_file_id, right_file_id, file_ids, model, answers)
+
+    def _stored(self, path: str, left_file_id: Optional[str], right_file_id: Optional[str],
+                file_ids: Optional[Sequence[str]], model: Optional[str], answers: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
         if file_ids is not None:
             body: Dict[str, Any] = {"file_ids": list(file_ids)}
         elif left_file_id and right_file_id:
@@ -222,7 +253,7 @@ class TrueUp:
             body["model"] = model
         if answers is not None:
             body["answers"] = answers
-        return self._request("POST", "/v1/reconcile", json_body=body)
+        return self._request("POST", path, json_body=body)
 
     # ------------------------------------------------------------ transport
 
