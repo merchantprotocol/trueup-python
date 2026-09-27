@@ -1,0 +1,39 @@
+Estimate,Hayes Residence
+Date,06/23/2026
+Building,40x60 14' eave
+Living area (sf),1420
+Baths,1
+Overhead doors,4
+Windows,14
+Entry doors,2
+Notes,"Fiberglass batt insulation in walls and ceiling. Ductless mini-split heat pumps. LVP flooring in the living area. Standard builder-grade finishes, laminate counters. Private well and septic system. No porch."
+
+Description,Qty,Unit,Unit Price,Total
+Clear lot and build building pad,2400,SF,2.47,5922.92
+Pour slab on grade incl. rebar,2400,SF,8.36,20061.15
+Pre-engineered steel building materials,5392,SF,6.20,33447.00
+Steel erection crew,5392,SF,3.21,17311.43
+Rough carpentry interior,1420,SF,6.94,9856.55
+Windows - vinyl single hung,14,EA,720.09,10081.24
+Exterior entry doors,2,EA,1562.66,3125.32
+Garage doors installed w/ openers,4,EA,3369.20,13476.80
+Batts + vapor barrier,5392,SF,1.09,5857.09
+"Plumbing - supply, drain, fixtures set - rough-in",1,LS,4903.22,4903.22
+"Plumbing - supply, drain, fixtures set - trim-out",1,LS,3829.84,3829.84
+"Electrical - 200A service, wiring, devices - rough",1,LS,5508.42,5508.42
+"Electrical - 200A service, wiring, devices - finish",1,LS,5522.85,5522.85
+Mini splits (3 heads) - equipment,1,LS,5215.77,5215.77
+Mini splits (3 heads) - install,1,LS,4592.59,4592.59
+Gypsum board - level 4 finish,1420,SF,6.55,9302.35
+Interior paint,1420,SF,3.38,4799.51
+Luxury vinyl plank floors,1420,SF,6.86,9739.90
+"Cabinets - stock, laminate countertops",1,LS,17294.61,17294.61
+"Trim carpentry - doors, base, casing",1420,SF,4.83,6861.02
+Allowance - appliances/fixtures,1,LS,11646.37,11646.37
+Seamless gutters,200,LF,12.50,2499.46
+"Water well, pump & pressure tank",1,LS,14672.47,14672.47
+On-site septic system,1,LS,19607.68,19607.68
+Permitting,2400,SF,1.12,2683.22
+Construction cleanup / dumpsters,1,LS,2389.31,2389.31
+General conditions & GC fee,1,LS,32413.64,32413.64
+TOTAL,,,,282621.73

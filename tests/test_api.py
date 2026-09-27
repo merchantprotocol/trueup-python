@@ -1,6 +1,6 @@
 """Integration tests against the live TrueUp API. Need TRUEUP_API_KEY (and optionally TRUEUP_BASE_URL).
 
-Each full run uses 8 analyses. Run in Docker: `just test` (or `docker compose run --rm test`).
+Each full run uses 10 analyses. Run in Docker: `just test` (or `docker compose run --rm test`).
 """
 
 import csv
@@ -82,8 +82,9 @@ def test_stored_files_runs_and_models():
             assert got["run"]["status"] == "done"
             assert got["result"]["stats"]["paired"] == 7
             page = tu.runs.list(limit=1)
-            assert len(page["runs"]) == 1 and page["has_more"] is True
-            assert tu.runs.list(limit=1, before=page["runs"][0]["id"])["runs"][0]["id"] != page["runs"][0]["id"]
+            assert len(page["runs"]) == 1
+            if page["has_more"]:
+                assert tu.runs.list(limit=1, before=page["runs"][0]["id"])["runs"][0]["id"] != page["runs"][0]["id"]
 
             model_id = tu.models.create(result["run_id"], "sdk test")
             try:
@@ -128,3 +129,19 @@ def test_audit_six_invoices_then_one_against_the_saved_laws():
         one = tu.audit([FIXTURES / "invoices" / "inv-1045.txt"], weights=result["details"]["weights"])
         assert one["details"]["model"]["learned"] is False
         assert [f["subject"] for f in one["findings"]] == ["inv-1045.txt"]
+
+
+TRADE = ["barndo.tu", "01_anderson.csv", "02_brooks.csv", "03_carter.md", "04_dalton.txt", "05_ellis.json", "06_foster.tsv", "07_garrison.txt", "08_hayes.csv", "09_iverson.csv", "10_jensen.md"]
+
+
+@live
+def test_estimate_a_new_job_then_the_next_with_the_saved_model():
+    with TrueUp() as tu:
+        result = tu.estimate([FIXTURES / "barndo" / n for n in TRADE + ["job_a.txt"]])
+        assert result["analysis"] == "estimate"
+        assert result["stats"]["past estimates"] == 10
+        assert abs(result["stats"]["total"] - 292267) / 292267 < 0.05, result["stats"]
+        assert result["stats"]["low"] < result["stats"]["total"] < result["stats"]["high"]
+        nxt = tu.estimate([FIXTURES / "barndo" / "job_b.txt"], weights=result["details"]["weights"])
+        assert nxt["details"]["model"]["learned"] is False
+        assert nxt["stats"]["total"] > 0

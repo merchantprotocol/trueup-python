@@ -1,0 +1,183 @@
+{
+  "project": "Ellis Residence",
+  "estimate_date": "2026-03-03",
+  "building_size": "40x60",
+  "eave_height_ft": 12,
+  "sqft_living": 1260,
+  "bathrooms": 3,
+  "overhead_doors": 2,
+  "window_count": 12,
+  "entry_doors": 2,
+  "notes": "Closed-cell spray foam insulation throughout. Ducted heat pump for heating and cooling. LVP flooring in the living area. Standard builder-grade finishes, laminate counters. City water and city sewer available at the lot. No porch.",
+  "items": [
+    {
+      "name": "Clear lot and build building pad",
+      "qty": 2400,
+      "uom": "SF",
+      "price": 2.9192,
+      "ext": 7006.18
+    },
+    {
+      "name": "Concrete floor slab & footings",
+      "qty": 2400,
+      "uom": "SF",
+      "price": 8.0851,
+      "ext": 19404.32
+    },
+    {
+      "name": "Steel building package (frame, panels, trim)",
+      "qty": 4992,
+      "uom": "SF",
+      "price": 6.9855,
+      "ext": 34871.65
+    },
+    {
+      "name": "Building erection labor & crane",
+      "qty": 4992,
+      "uom": "SF",
+      "price": 3.6078,
+      "ext": 18010.14
+    },
+    {
+      "name": "Interior framing labor & lumber",
+      "qty": 1260,
+      "uom": "SF",
+      "price": 6.7576,
+      "ext": 8514.61
+    },
+    {
+      "name": "Vinyl windows installed",
+      "qty": 12,
+      "uom": "EA",
+      "price": 593.7833,
+      "ext": 7125.4
+    },
+    {
+      "name": "Man doors installed",
+      "qty": 2,
+      "uom": "EA",
+      "price": 1564.835,
+      "ext": 3129.67
+    },
+    {
+      "name": "Garage doors installed w/ openers",
+      "qty": 2,
+      "uom": "EA",
+      "price": 2870.665,
+      "ext": 5741.33
+    },
+    {
+      "name": "Spray foam - walls & roof",
+      "qty": 4992,
+      "uom": "SF",
+      "price": 2.6605,
+      "ext": 13281.09
+    },
+    {
+      "name": "Plumbing rough & finish",
+      "qty": 3,
+      "uom": "EA",
+      "price": 8061.1067,
+      "ext": 24183.32
+    },
+    {
+      "name": "Electric - panel, circuits, lights",
+      "qty": 1260,
+      "uom": "SF",
+      "price": 9.4999,
+      "ext": 11969.84
+    },
+    {
+      "name": "Central air handler + ducts",
+      "qty": 1260,
+      "uom": "SF",
+      "price": 10.3507,
+      "ext": 13041.86
+    },
+    {
+      "name": "Drywall hang, tape & finish",
+      "qty": 1260,
+      "uom": "SF",
+      "price": 6.6971,
+      "ext": 8438.38
+    },
+    {
+      "name": "Interior paint",
+      "qty": 1260,
+      "uom": "SF",
+      "price": 3.245,
+      "ext": 4088.64
+    },
+    {
+      "name": "Flooring - LVP throughout living",
+      "qty": 1260,
+      "uom": "SF",
+      "price": 6.176,
+      "ext": 7781.79
+    },
+    {
+      "name": "Kitchen cabinets & laminate tops",
+      "qty": 1,
+      "uom": "LS",
+      "price": 18433.46,
+      "ext": 18433.46
+    },
+    {
+      "name": "Finish carpentry",
+      "qty": 1260,
+      "uom": "SF",
+      "price": 4.4353,
+      "ext": 5588.54
+    },
+    {
+      "name": "Fixtures & appliances allowance",
+      "qty": 1,
+      "uom": "LS",
+      "price": 10915.88,
+      "ext": 10915.88
+    },
+    {
+      "name": "Gutters & downspouts",
+      "qty": 200,
+      "uom": "LF",
+      "price": 12.2883,
+      "ext": 2457.66
+    },
+    {
+      "name": "Municipal water hookup",
+      "qty": 1,
+      "uom": "LS",
+      "price": 4863.11,
+      "ext": 4863.11
+    },
+    {
+      "name": "Sewer lateral + connection",
+      "qty": 1,
+      "uom": "LS",
+      "price": 5670.59,
+      "ext": 5670.59
+    },
+    {
+      "name": "Building permit + plan review",
+      "qty": 2400,
+      "uom": "SF",
+      "price": 1.0754,
+      "ext": 2580.88
+    },
+    {
+      "name": "Construction cleanup / dumpsters",
+      "qty": 1,
+      "uom": "LS",
+      "price": 2752.75,
+      "ext": 2752.75
+    },
+    {
+      "name": "Builder margin",
+      "qty": 1,
+      "uom": "LS",
+      "price": 35321.83,
+      "ext": 35321.83
+    }
+  ],
+  "estimate_total": 275172.92
+}

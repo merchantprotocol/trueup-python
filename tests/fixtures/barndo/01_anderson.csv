@@ -1,0 +1,40 @@
+Estimate,Anderson Residence
+Date,10/06/2025
+Building,30x40 16' eave
+Living area (sf),660
+Baths,1
+Overhead doors,2
+Windows,15
+Entry doors,4
+Notes,"Fiberglass batt insulation in walls and ceiling. Ductless mini-split heat pumps. LVP flooring in the living area. Premium finish package: custom cabinets, quartz counters, fiberglass windows. Private well and septic system. 480 sq ft covered porch."
+
+Description,Qty,Unit,Unit Price,Total
+Site prep & grading,1200,SF,2.75,3302.33
+Foundation - 4 in reinforced concrete slab,1200,SF,7.05,8459.96
+Red iron frame + 26 ga panels,3536,SF,6.53,23096.76
+Shell install - frame and sheet,3536,SF,3.34,11803.99
+Rough carpentry interior,660,SF,7.04,4645.15
+Windows - Pella fiberglass,15,EA,1283.58,19253.75
+Premium entry door package,4,EA,2676.55,10706.20
+Garage doors installed w/ openers,2,EA,2793.36,5586.71
+Batts + vapor barrier,3536,SF,1.27,4502.36
+Plumbing (rough-in and trim) - rough-in,1,LS,3853.11,3853.11
+Plumbing (rough-in and trim) - trim-out,1,LS,3069.11,3069.11
+Wiring and electrical fixtures - rough,1,LS,2582.98,2582.98
+Wiring and electrical fixtures - finish,1,LS,2988.55,2988.55
+Ductless mini-split system - equipment,1,LS,2568.80,2568.80
+Ductless mini-split system - install,1,LS,1934.85,1934.85
+Sheetrock,660,SF,5.73,3783.57
+"Painting - interior, 2 coats",660,SF,3.35,2211.98
+Luxury vinyl plank floors,660,SF,5.28,3487.06
+Quartz countertops + custom cabinets,1,LS,26079.75,26079.75
+"Finish carpentry - solid core doors, wide casing",660,SF,5.79,3822.79
+Premium appliance & fixture allowance,1,LS,18579.51,18579.51
+Gutters & downspouts,140,LF,10.82,1514.83
+"Porch - covered, concrete floor",480,SF,42.37,20336.81
+Drill well + pump,1,LS,14634.43,14634.43
+Septic system installed,1,LS,17036.14,17036.14
+Building permit + plan review,1200,SF,0.91,1088.57
+Dumpster & final clean,1,LS,2949.61,2949.61
+Builder margin,1,LS,28446.89,28446.89
+TOTAL,,,,252326.55
