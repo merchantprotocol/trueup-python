@@ -1,0 +1,18 @@
+INVOICE
+=======
+
+From: Ridgeline Steel Supply
+Invoice Number: INV-1042
+Date: 2026-08-07
+
+Line Items
+----------
+Items:
+  - Description C-purlins 8in | Amount $6,980.40
+  - Description Self-drilling screws | Amount $319.90
+  - Description Delivery | Amount $125.00
+
+Subtotal: $7,425.30
+Tax Rate: 6.00%
+Tax Amount: $445.52
+Total: $7,870.82

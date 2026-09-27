@@ -232,6 +232,21 @@ class TrueUp:
         (``run_id``). One analysis."""
         return self._stored("/v1/match", left_file_id, right_file_id, file_ids, model, None)
 
+    def audit(self, files: Sequence[TableLike], *, weights: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
+        """Find what doesn't add up. Text documents (invoices, statements, 4 or more of a kind): TrueUp learns the
+        arithmetic each kind obeys and flags the ones that break it. One table: the same for its rows, plus repeated
+        rows. ``weights`` (``details["weights"]`` of an earlier audit) checks new documents against the same laws.
+        Counts as one analysis.
+        """
+        if not files:
+            raise InvalidRequestError("Pass the documents (or one table) to audit.", 0, "invalid_request")
+        return self._request("POST", "/v1/audit", files=[("files", _table(f)._file()) for f in files],
+                             data=_options(weights, None))
+
+    def audit_stored(self, file_ids: Sequence[str], *, model: Optional[str] = None) -> Dict[str, Any]:
+        """Audit files already stored in the team, by id. ``model`` applies a saved audit model. The run is kept."""
+        return self._stored("/v1/audit", None, None, file_ids, model, None)
+
     def reconcile_stored(self, left_file_id: Optional[str] = None, right_file_id: Optional[str] = None, *,
                          file_ids: Optional[Sequence[str]] = None, model: Optional[str] = None,
                          answers: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:

@@ -1,0 +1,17 @@
+INVOICE
+=======
+
+From: Ridgeline Steel Supply
+Invoice Number: INV-1046
+Date: 2026-08-28
+
+Line Items
+----------
+Items:
+  - Description Wainscot panels | Amount $1,940.00
+  - Description Trim package | Amount $612.35
+
+Subtotal: $2,552.35
+Tax Rate: 6.00%
+Tax Amount: $153.14
+Total: $2,705.49

@@ -1,0 +1,17 @@
+INVOICE
+=======
+
+From: Ridgeline Steel Supply
+Invoice Number: INV-1041
+Date: 2026-08-03
+
+Line Items
+----------
+Items:
+  - Description 29ga roof panels | Amount $4,210.00
+  - Description Ridge cap | Amount $256.80
+
+Subtotal: $4,466.80
+Tax Rate: 6.00%
+Tax Amount: $268.01
+Total: $4,734.81

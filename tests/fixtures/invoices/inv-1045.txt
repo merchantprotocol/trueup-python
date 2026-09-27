@@ -1,0 +1,17 @@
+INVOICE
+=======
+
+From: Ridgeline Steel Supply
+Invoice Number: INV-1045
+Date: 2026-08-21
+
+Line Items
+----------
+Items:
+  - Description Overhead door 12x14 | Amount $3,875.00
+  - Description Walk door 3070 | Amount $689.00
+
+Subtotal: $4,564.00
+Tax Rate: 6.00%
+Tax Amount: $273.84
+Total: $5,037.84

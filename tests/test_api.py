@@ -1,6 +1,6 @@
 """Integration tests against the live TrueUp API. Need TRUEUP_API_KEY (and optionally TRUEUP_BASE_URL).
 
-Each full run uses 6 analyses. Run in Docker: `just test` (or `docker compose run --rm test`).
+Each full run uses 8 analyses. Run in Docker: `just test` (or `docker compose run --rm test`).
 """
 
 import csv
@@ -115,3 +115,16 @@ def test_match_two_lists_then_reuse_the_learning():
                          weights=result["details"]["weights"])
         assert [p[:2] for p in again["details"]["pairs"]] == MATCHED
         assert again["details"]["model"]["learned"] is False
+
+
+@live
+def test_audit_six_invoices_then_one_against_the_saved_laws():
+    with TrueUp() as tu:
+        names = [f"inv-104{i}.txt" for i in range(1, 7)]
+        result = tu.audit([FIXTURES / "invoices" / n for n in names])
+        assert result["analysis"] == "audit"
+        assert [(f["subject"], f["status"], f["amount"]) for f in result["findings"]] == [("inv-1045.txt", "yes", 200)]
+        assert any(l["law"] == "subtotal + tax amount = total" for l in result["details"]["laws"])
+        one = tu.audit([FIXTURES / "invoices" / "inv-1045.txt"], weights=result["details"]["weights"])
+        assert one["details"]["model"]["learned"] is False
+        assert [f["subject"] for f in one["findings"]] == ["inv-1045.txt"]

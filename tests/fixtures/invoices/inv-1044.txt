@@ -1,0 +1,17 @@
+INVOICE
+=======
+
+From: Ridgeline Steel Supply
+Invoice Number: INV-1044
+Date: 2026-08-15
+
+Line Items
+----------
+Items:
+  - Description Red iron frame package | Amount $38,450.00
+  - Description Engineering stamp | Amount $1,200.00
+
+Subtotal: $39,650.00
+Tax Rate: 6.00%
+Tax Amount: $2,379.00
+Total: $42,029.00
