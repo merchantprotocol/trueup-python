@@ -1,0 +1,16 @@
+INVOICE
+=======
+
+From: Ridgeline Steel Supply
+Invoice Number: INV-1043
+Date: 2026-08-12
+
+Line Items
+----------
+Items:
+  - Description Anchor bolts | Amount $482.50
+
+Subtotal: $482.50
+Tax Rate: 6.00%
+Tax Amount: $28.95
+Total: $511.45
