@@ -1,0 +1,6 @@
+services:
+  test:
+    build: .
+    environment:
+      TRUEUP_API_KEY: ${TRUEUP_API_KEY:-}
+      TRUEUP_BASE_URL: ${TRUEUP_BASE_URL:-}

@@ -1,0 +1,16 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 13 * * *"   # daily: the live API still answers this SDK
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tests in Docker against the live API
+        env:
+          TRUEUP_API_KEY: ${{ secrets.TRUEUP_API_KEY }}
+        run: docker compose run --rm test
